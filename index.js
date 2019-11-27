@@ -1,7 +1,6 @@
 var FFMPEG = require("homebridge-camera-ffmpeg/ffmpeg").FFMPEG;
 var Foscam = require("foscam-client");
 var exec = require('child_process').exec;
-var os = require('os');
 
 var Accessory, Service, Characteristic, UUIDGen, hap;
 
@@ -422,8 +421,7 @@ FoscamPlatform.prototype.motionDetected = function (mac) {
   if (thisCamera.videoConfig.recorder && !thisCamera.isRecording) {
     thisCamera.isRecording = true;
     var date = new Date().toISOString().replace(":", "_");
-    var folder = thisCamera.videoConfig.folder
-    var file = os.homedir() + "/" + folder + "/" + thisCamera.description + "/" + date + ".mpg";
+    var file = thisCamera.videoConfig.folder + "/" + thisCamera.description + "/" + date + ".mpg";
     var vlc = thisCamera.videoConfig.recorder;
     var source = thisCamera.videoConfig.source.split(" ");
     var rtsp = source[source.length - 1];
