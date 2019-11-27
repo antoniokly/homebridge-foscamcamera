@@ -428,6 +428,7 @@ FoscamPlatform.prototype.motionDetected = function (mac) {
     var source = thisCamera.videoConfig.source.split(" ");
     var rtsp = source[source.length - 1];
     var cmd = vlc + " -vvv "  + rtsp + " --sout file/ts:" + file + " --run-time=60 --stop-time=60 vlc://quit";
+    this.log("recording...", cmd);
 
     var self = this;
     exec(cmd, function (error, stdOut, stdErr) {
