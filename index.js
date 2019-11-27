@@ -428,8 +428,14 @@ FoscamPlatform.prototype.motionDetected = function (mac) {
 
     this.log('recording...', cmd);
 
+    var self = this;
     exec(cmd, function (error, stdOut, stdErr) {
-      this.log('recorded video', file);
+      if (error || stdErr) {
+        self.log(error);
+        self.log(stdErr);
+      } else {
+        self.log('recorded video', file);
+      }
       thisCamera.isRecording = false;
     });
   }
