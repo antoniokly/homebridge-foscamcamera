@@ -1,5 +1,7 @@
 var FFMPEG = require("homebridge-camera-ffmpeg/ffmpeg").FFMPEG;
 var Foscam = require("foscam-client");
+var exec = require('child_process');
+
 var Accessory, Service, Characteristic, UUIDGen, hap;
 
 module.exports = function (homebridge) {
@@ -413,6 +415,21 @@ FoscamPlatform.prototype.motionDetected = function (mac) {
     thisCamera.motionAlarm = true;
     thisAccessory.getService(Service.MotionSensor)
       .setCharacteristic(Characteristic.MotionDetected, thisCamera.motionAlarm);
+  }
+
+  // Record video
+  if (!thisCamera.isRecording) {
+    var file = "~/Cameras/" + thisCamera.description + "/" + thisCamera.description + ".mpg";
+    var vlc = thisCamera.vlcPath | "vlc";
+    var source = thisCamera.videoConfig.source.split(" ");
+    var rtsp = source[source.length - 1];
+    var cmd = vlc + " -vvv "  + rtsp + " --sout file/ts:" + file + " --run-time=60 --stop-time=60 vlc://quit";
+
+    console.log('recording...', cmd);
+
+    exec(cmd, function (error, stdOut, stdErr) {
+      console.log('recorded video', file);
+    });
   }
 
   // Reset motion detected after trigger interval
