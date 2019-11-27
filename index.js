@@ -1,7 +1,6 @@
 var FFMPEG = require("homebridge-camera-ffmpeg/ffmpeg").FFMPEG;
 var Foscam = require("foscam-client");
 var exec = require('child_process').exec;
-var ThumbnailGenerator = require('video-thumbnail-generator');
 
 var Accessory, Service, Characteristic, UUIDGen, hap;
 
@@ -418,16 +417,27 @@ FoscamPlatform.prototype.motionDetected = function (mac) {
       .setCharacteristic(Characteristic.MotionDetected, thisCamera.motionAlarm);
   }
 
-  // Record video
+  // Record video and Save Snapshot 
   if (thisCamera.videoConfig.recorder && !thisCamera.isRecording) {
     thisCamera.isRecording = true;
     var date = new Date().getTime();
     var dir = thisCamera.videoConfig.folder + "/" + thisCamera.description;
     var file = dir + "/" + date + ".mpg";
+    var snapFile = dir + "/" + date + ".jpg";
     var vlc = thisCamera.videoConfig.recorder;
     var source = thisCamera.videoConfig.source.split(" ");
     var rtsp = source[source.length - 1];
     var recordTime = thisCamera.videoConfig.recordTime;
+    
+    var snapCmd = `wget --output-document ${snapFile} ${thisCamera.videoConfig.stillImageSource}`
+    exec(snapCmd, function (error, stdOut, stdErr) {
+      if (error) {
+        self.log(error);
+      } else {
+        self.log('captured image to', file);
+      }
+    });
+
     var cmd = vlc + " -vvv "  + rtsp + " --sout file/ts:" + file + " --run-time=" + recordTime + " --stop-time=" + recordTime + " vlc://quit";
     this.log("recording...", cmd);
 
@@ -437,15 +447,6 @@ FoscamPlatform.prototype.motionDetected = function (mac) {
         self.log(error);
       } else {
         self.log('recorded video to', file);
-        
-        var tg = new ThumbnailGenerator({
-          sourcePath: file,
-          thumbnailPath: dir
-        });
-
-        tg.generateOneByPercentCb(90, (err, result) => {
-          console.log(result);
-        });
       }
       thisCamera.isRecording = false;
     });
