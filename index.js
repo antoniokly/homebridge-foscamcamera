@@ -419,16 +419,18 @@ FoscamPlatform.prototype.motionDetected = function (mac) {
 
   // Record video
   if (!thisCamera.isRecording) {
-    var file = "~/Cameras/" + thisCamera.description + "/" + thisCamera.description + ".mpg";
+    thisCamera.isRecording = true;
+    var file = "~/Videos/" + thisCamera.description + "/" + thisCamera.description + ".mpg";
     var vlc = "vlc";
     var source = thisCamera.videoConfig.source.split(" ");
     var rtsp = source[source.length - 1];
     var cmd = vlc + " -vvv "  + rtsp + " --sout file/ts:" + file + " --run-time=60 --stop-time=60 vlc://quit";
 
-    console.log('recording...', cmd);
+    this.log('recording...', cmd);
 
     exec(cmd, function (error, stdOut, stdErr) {
-      console.log('recorded video', file);
+      this.log('recorded video', file);
+      thisCamera.isRecording = false;
     });
   }
 
