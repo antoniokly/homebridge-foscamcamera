@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "foscam-client": "^0.4.0",
-    "homebridge-camera-ffmpeg": "^0.1.8"
+    "homebridge-camera-ffmpeg": "^0.1.8",
+    "video-thumbnail-generator": "^1.1.3"
   }
 }
