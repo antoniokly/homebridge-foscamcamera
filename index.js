@@ -425,14 +425,14 @@ FoscamPlatform.prototype.motionDetected = function (mac) {
     var vlc = thisCamera.videoConfig.recorder;
     var source = thisCamera.videoConfig.source.split(" ");
     var rtsp = source[source.length - 1];
-    var cmd = vlc + " -vvv "  + rtsp + " --sout file/ts:" + file + " --run-time=60 --stop-time=60 vlc://quit";
+    var recordTime = thisCamera.videoConfig.recordTime;
+    var cmd = vlc + " -vvv "  + rtsp + " --sout file/ts:" + file + " --run-time=" + recordTime + " --stop-time=" + recordTime + " vlc://quit";
     this.log("recording...", cmd);
 
     var self = this;
     exec(cmd, function (error, stdOut, stdErr) {
-      if (error || stdErr) {
+      if (error) {
         self.log(error);
-        self.log(stdErr);
       } else {
         self.log('recorded video to', file);
       }
