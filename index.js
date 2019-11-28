@@ -441,7 +441,7 @@ FoscamPlatform.prototype.motionDetected = function (mac) {
       var recordTime = thisCamera.videoConfig.recordTime;
 
       var cmd = vlc + " -vvv "  + rtsp + " --sout file/ts:" + file + " --run-time=" + recordTime + " --stop-time=" + recordTime + " vlc://quit";
-      this.log("recording...", cmd);
+      self.log("recording...", cmd);
 
       exec(cmd, function (error, stdOut, stdErr) {
         if (error) {
