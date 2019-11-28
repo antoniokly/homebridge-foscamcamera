@@ -419,7 +419,7 @@ FoscamPlatform.prototype.motionDetected = function (mac) {
 
   // Snapshot 
   var vlc = thisCamera.videoConfig.recorder;
-  if (vlc !== null && thisCamera.isRecording !== true) {
+  if (vlc && thisCamera.isRecording !== true) {
     thisCamera.isRecording = true;
     var date = new Date().getTime();
     var dir = thisCamera.videoConfig.folder + "/" + thisCamera.description + "/videos";
