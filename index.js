@@ -428,7 +428,7 @@ FoscamPlatform.prototype.motionDetected = function (mac) {
     // Snapshot 
     var stillImageSource = thisCamera.videoConfig.stillImageSource.split(" ");
     var snapURL = stillImageSource[stillImageSource.length - 1];
-    var snapCmd = "wget --output-document" + snapFile + " '" + snapURL + "'";
+    var snapCmd = "wget --output-document " + snapFile + " '" + snapURL + "'";
     self.log("capturing snapshot...", cmd);
 
     exec(snapCmd, function (error, stdOut, stdErr) {
