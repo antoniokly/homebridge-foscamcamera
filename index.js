@@ -417,7 +417,6 @@ FoscamPlatform.prototype.motionDetected = function (mac) {
       .setCharacteristic(Characteristic.MotionDetected, thisCamera.motionAlarm);
   }
 
-  // Snapshot 
   var recorder = thisCamera.videoConfig.recorder;
   if (recorder && thisCamera.isRecording !== true) {
     thisCamera.isRecording = true;
@@ -426,6 +425,7 @@ FoscamPlatform.prototype.motionDetected = function (mac) {
     var snapFile = dir + "/" + date + ".jpg";
     var self = this;
 
+    // Snapshot 
     var snapCmd = `wget --output-document ${snapFile} ${thisCamera.videoConfig.stillImageSource}`
     exec(snapCmd, function (error, stdOut, stdErr) {
       if (error) {
@@ -433,24 +433,24 @@ FoscamPlatform.prototype.motionDetected = function (mac) {
       } else {
         self.log('captured image to', snapFile);
       }
+    });
 
-      // Record video 
-      var file = dir + "/" + date + ".mpg";
-      var source = thisCamera.videoConfig.source.split(" ");
-      var rtsp = source[source.length - 1];
-      var recordTime = thisCamera.videoConfig.recordTime;
+    // Record video 
+    var file = dir + "/" + date + ".mpg";
+    var source = thisCamera.videoConfig.source.split(" ");
+    var rtsp = source[source.length - 1];
+    var recordTime = thisCamera.videoConfig.recordTime;
 
-      var cmd = recorder + " -vvv "  + rtsp + " --sout file/ts:" + file + " --run-time=" + recordTime + " --stop-time=" + recordTime + " vlc://quit";
-      self.log("recording...", cmd);
+    var cmd = recorder + " -vvv "  + rtsp + " --sout file/ts:" + file + " --run-time=" + recordTime + " --stop-time=" + recordTime + " vlc://quit";
+    self.log("recording...", cmd);
 
-      exec(cmd, function (error, stdOut, stdErr) {
-        if (error) {
-          self.log(error);
-        } else {
-          self.log('recorded video to', file);
-        }
-        thisCamera.isRecording = false;
-      });
+    exec(cmd, function (error, stdOut, stdErr) {
+      if (error) {
+        self.log(error);
+      } else {
+        self.log('recorded video to', file);
+      }
+      thisCamera.isRecording = false;
     });
   }
 
