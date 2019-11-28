@@ -417,38 +417,40 @@ FoscamPlatform.prototype.motionDetected = function (mac) {
       .setCharacteristic(Characteristic.MotionDetected, thisCamera.motionAlarm);
   }
 
-  // Record video and Save Snapshot 
-  if (thisCamera.videoConfig.recorder && !thisCamera.isRecording) {
+  // Snapshot 
+  var vlc = thisCamera.videoConfig.recorder;
+  if (vlc !== null && thisCamera.isRecording !== true) {
     thisCamera.isRecording = true;
     var date = new Date().getTime();
     var dir = thisCamera.videoConfig.folder + "/" + thisCamera.description + "/videos";
-    var file = dir + "/" + date + ".mpg";
     var snapFile = dir + "/" + date + ".jpg";
-    var vlc = thisCamera.videoConfig.recorder;
-    var source = thisCamera.videoConfig.source.split(" ");
-    var rtsp = source[source.length - 1];
-    var recordTime = thisCamera.videoConfig.recordTime;
-    
+    var self = this;
+
     var snapCmd = `wget --output-document ${snapFile} ${thisCamera.videoConfig.stillImageSource}`
     exec(snapCmd, function (error, stdOut, stdErr) {
       if (error) {
         self.log(error);
       } else {
-        self.log('captured image to', file);
+        self.log('captured image to', snapFile);
       }
-    });
 
-    var cmd = vlc + " -vvv "  + rtsp + " --sout file/ts:" + file + " --run-time=" + recordTime + " --stop-time=" + recordTime + " vlc://quit";
-    this.log("recording...", cmd);
+      // Record video 
+      var file = dir + "/" + date + ".mpg";
+      var source = thisCamera.videoConfig.source.split(" ");
+      var rtsp = source[source.length - 1];
+      var recordTime = thisCamera.videoConfig.recordTime;
 
-    var self = this;
-    exec(cmd, function (error, stdOut, stdErr) {
-      if (error) {
-        self.log(error);
-      } else {
-        self.log('recorded video to', file);
-      }
-      thisCamera.isRecording = false;
+      var cmd = vlc + " -vvv "  + rtsp + " --sout file/ts:" + file + " --run-time=" + recordTime + " --stop-time=" + recordTime + " vlc://quit";
+      this.log("recording...", cmd);
+
+      exec(cmd, function (error, stdOut, stdErr) {
+        if (error) {
+          self.log(error);
+        } else {
+          self.log('recorded video to', file);
+        }
+        thisCamera.isRecording = false;
+      });
     });
   }
 
