@@ -426,7 +426,9 @@ FoscamPlatform.prototype.motionDetected = function (mac) {
     var self = this;
 
     // Snapshot 
-    var snapCmd = `wget --output-document ${snapFile} ${thisCamera.videoConfig.stillImageSource}`
+    var snapCmd = "wget --output-document" + snapFile + " '" + thisCamera.videoConfig.stillImageSource + "'";
+    self.log("capturing snapshot...", cmd);
+
     exec(snapCmd, function (error, stdOut, stdErr) {
       if (error) {
         self.log(error);
@@ -442,7 +444,7 @@ FoscamPlatform.prototype.motionDetected = function (mac) {
     var recordTime = thisCamera.videoConfig.recordTime;
 
     var cmd = recorder + " -vvv "  + rtsp + " --sout file/ts:" + file + " --run-time=" + recordTime + " --stop-time=" + recordTime + " vlc://quit";
-    self.log("recording...", cmd);
+    self.log("recording video...", cmd);
 
     exec(cmd, function (error, stdOut, stdErr) {
       if (error) {
