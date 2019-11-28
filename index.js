@@ -415,47 +415,47 @@ FoscamPlatform.prototype.motionDetected = function (mac) {
     thisCamera.motionAlarm = true;
     thisAccessory.getService(Service.MotionSensor)
       .setCharacteristic(Characteristic.MotionDetected, thisCamera.motionAlarm);
-  }
-
-  var recorder = thisCamera.videoConfig.recorder;
-  if (recorder && thisCamera.isRecording !== true) {
-    thisCamera.isRecording = true;
-    var date = new Date().getTime();
-    var dir = thisCamera.videoConfig.folder + "/" + thisCamera.description + "/videos";
-    var snapFile = dir + "/" + date + ".jpg";
-    var self = this;
-
-    // Snapshot 
-    var stillImageSource = thisCamera.videoConfig.stillImageSource.split(" ");
-    var snapURL = stillImageSource[stillImageSource.length - 1];
-    var snapCmd = "wget --output-document " + snapFile + " '" + snapURL + "'";
-    self.log("capturing snapshot...", snapCmd);
-
-    exec(snapCmd, function (error, stdOut, stdErr) {
-      if (error) {
-        self.log(error);
-      } else {
-        self.log('captured image to', snapFile);
-      }
-    });
-
-    // Record video 
-    var file = dir + "/" + date + ".mpg";
-    var source = thisCamera.videoConfig.source.split(" ");
-    var rtsp = source[source.length - 1];
-    var recordTime = thisCamera.videoConfig.recordTime;
-
-    var cmd = recorder + " -vvv '"  + rtsp + "' --sout file/ts:" + file + " --run-time=" + recordTime + " --stop-time=" + recordTime + " vlc://quit";
-    self.log("recording video...", cmd);
-
-    exec(cmd, function (error, stdOut, stdErr) {
-      if (error) {
-        self.log(error);
-      } else {
-        self.log('recorded video to', file);
-      }
-      thisCamera.isRecording = false;
-    });
+    
+    var recorder = thisCamera.videoConfig.recorder;
+    if (recorder && thisCamera.isRecording !== true) {
+      thisCamera.isRecording = true;
+      var date = new Date().getTime();
+      var dir = thisCamera.videoConfig.folder + "/" + thisCamera.description + "/videos";
+      var snapFile = dir + "/" + date + ".jpg";
+      var self = this;
+  
+      // Snapshot 
+      var stillImageSource = thisCamera.videoConfig.stillImageSource.split(" ");
+      var snapURL = stillImageSource[stillImageSource.length - 1];
+      var snapCmd = "wget --output-document " + snapFile + " '" + snapURL + "'";
+      self.log("capturing snapshot...", snapCmd);
+  
+      exec(snapCmd, function (error, stdOut, stdErr) {
+        if (error) {
+          self.log(error);
+        } else {
+          self.log('captured image to', snapFile);
+        }
+      });
+  
+      // Record video 
+      var file = dir + "/" + date + ".mpg";
+      var source = thisCamera.videoConfig.source.split(" ");
+      var rtsp = source[source.length - 1];
+      var recordTime = thisCamera.videoConfig.recordTime;
+  
+      var cmd = recorder + " -vvv '"  + rtsp + "' --sout file/ts:" + file + " --run-time=" + recordTime + " --stop-time=" + recordTime + " vlc://quit";
+      self.log("recording video...", cmd);
+  
+      exec(cmd, function (error, stdOut, stdErr) {
+        if (error) {
+          self.log(error);
+        } else {
+          self.log('recorded video to', file);
+        }
+        thisCamera.isRecording = false;
+      });
+    }
   }
 
   // Reset motion detected after trigger interval
