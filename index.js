@@ -418,8 +418,8 @@ FoscamPlatform.prototype.motionDetected = function (mac) {
   }
 
   // Snapshot 
-  var vlc = thisCamera.videoConfig.recorder;
-  if (vlc && thisCamera.isRecording !== true) {
+  var recorder = thisCamera.videoConfig.recorder;
+  if (recorder === "vlc" && thisCamera.isRecording !== true) {
     thisCamera.isRecording = true;
     var date = new Date().getTime();
     var dir = thisCamera.videoConfig.folder + "/" + thisCamera.description + "/videos";
@@ -440,7 +440,7 @@ FoscamPlatform.prototype.motionDetected = function (mac) {
       var rtsp = source[source.length - 1];
       var recordTime = thisCamera.videoConfig.recordTime;
 
-      var cmd = vlc + " -vvv "  + rtsp + " --sout file/ts:" + file + " --run-time=" + recordTime + " --stop-time=" + recordTime + " vlc://quit";
+      var cmd = recorder + " -vvv "  + rtsp + " --sout file/ts:" + file + " --run-time=" + recordTime + " --stop-time=" + recordTime + " vlc://quit";
       self.log("recording...", cmd);
 
       exec(cmd, function (error, stdOut, stdErr) {
